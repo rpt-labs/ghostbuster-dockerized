@@ -52,8 +52,15 @@ exports.deleteMessage = async (req, res) => {
 exports.getSprintGithubData = async (req, res) => {
   let { sprintNames } = req.params;
   const { cohort } = req.query;
+  const { cacheFlag } = req.params;
   sprintNames = sprintNames.split('+');
 
-  const result = await getSprintDataByCohort(cohort, sprintNames);
+  let result;
+
+  if (JSON.parse(cacheFlag)) {
+    sheetsController.retrieveCache(cohort, sprintNames);
+  } else {
+    result = await getSprintDataByCohort(cohort, sprintNames);
+  }
   res.status(200).json(result);
 };
