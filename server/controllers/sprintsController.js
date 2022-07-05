@@ -1,5 +1,6 @@
 // github sprint checking util
 const getSprintDataByCohort = require('../helpers/sprintChecker');
+const sheetsController = require('./sheets-controller');
 
 // db
 const sprints = require('../../db/models/sprints');

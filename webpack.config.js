@@ -59,7 +59,7 @@ module.exports = () => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.GHOSTBUSTER_BASE_URL': JSON.stringify(env.GHOSTBUSTER_BASE_URL)
+        'process.env.GHOSTBUSTER_BASE_URL': JSON.stringify(process.env.GHOSTBUSTER_BASE_URL)
       }),
       new HtmlWebpackPlugin({
         template: path.join(srcFolder, 'index.html'),
