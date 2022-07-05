@@ -12,15 +12,16 @@ jwtClient.authorize((err, tokens) => {
   if (err) {
     console.log('this is the error!!!!!!!!!!!!!!!!!!!!!!', err); // return?
   } else {
-    console.log('Successfully connected!');
+    console.log('Successfully connected to sheet!');
   }
 });
 
-const spreadsheetId = 'ghostbuster';
-const sheetRange = 'Homepage_Data!A1:B10';
+const spreadsheetId = '1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI';
+const sheetRange = 'Sheet1!A1:B10';
 const sheets = google.google.sheets('v4');
 
 const retrieveCache = () => {
+
   return sheets.spreadsheets.values.get(
     {
       auth: jwtClient,
@@ -31,14 +32,11 @@ const retrieveCache = () => {
       if (err) {
         console.log('The API returned an error: ' + err);
       } else {
-        console.log('Data from Ghostbuster Google Sheet:');
-        for (let row of response.values) {
-          console.log('Title [%s]\t\tRating [%s]', row[0], row[1]);
-        }
+        console.log('Data from Ghostbuster Google Sheet:', response.data.values);
       }
     });
-}
+};
 
 module.exports.sheetsController = {
   retrieveCache
-};
+}

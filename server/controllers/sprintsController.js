@@ -1,6 +1,7 @@
 // github sprint checking util
 const getSprintDataByCohort = require('../helpers/sprintChecker');
-const sheetsController = require('./sheets-controller');
+const { sheetsController } = require('./sheets-controller');
+
 
 // db
 const sprints = require('../../db/models/sprints');
@@ -50,6 +51,7 @@ exports.deleteMessage = async (req, res) => {
   res.json({ message: 'add functionality to delete new milestone message' });
 };
 
+// local endpoint URI http://localhost:1234/ghostbuster/sprints/somename/true
 exports.getSprintGithubData = async (req, res) => {
   let { sprintNames } = req.params;
   const { cohort } = req.query;
