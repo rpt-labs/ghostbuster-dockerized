@@ -1,5 +1,7 @@
 // github sprint checking util
 const getSprintDataByCohort = require('../helpers/sprintChecker');
+const { sheetsController } = require('./sheets-controller');
+
 
 // db
 const sprints = require('../../db/models/sprints');
@@ -49,11 +51,22 @@ exports.deleteMessage = async (req, res) => {
   res.json({ message: 'add functionality to delete new milestone message' });
 };
 
+// local endpoint URI http://localhost:1234/ghostbuster/sprints/somename/true
 exports.getSprintGithubData = async (req, res) => {
   let { sprintNames } = req.params;
   const { cohort } = req.query;
+  const { cacheFlag } = req.params;
   sprintNames = sprintNames.split('+');
 
-  const result = await getSprintDataByCohort(cohort, sprintNames);
+  let result;
+
+  if (JSON.parse(cacheFlag)) {
+    //sheetsController.updateCache();
+    sheetsController.retrieveCache(cohort, sprintNames)
+    .then(data => console.log(data));
+
+  } else {
+    result = await getSprintDataByCohort(cohort, sprintNames);
+  }
   res.status(200).json(result);
 };
