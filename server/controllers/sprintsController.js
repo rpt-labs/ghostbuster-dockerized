@@ -61,8 +61,10 @@ exports.getSprintGithubData = async (req, res) => {
   let result;
 
   if (JSON.parse(cacheFlag)) {
-    sheetsController.retrieveCache()
-    .then(data => console.log('data ==== ,', data));
+    //sheetsController.updateCache();
+    sheetsController.retrieveCache(cohort, sprintNames)
+    .then(data => console.log(data));
+
   } else {
     result = await getSprintDataByCohort(cohort, sprintNames);
   }

@@ -9,68 +9,60 @@ const jwtClient = new google.google.auth.JWT(
   ['https://www.googleapis.com/auth/spreadsheets']
 );
 
-jwtClient.authorize((err, tokens) => {
+jwtClient.authorize((err) => {
   if (err) {
-    console.log('this is the error!!!!!!!!!!!!!!!!!!!!!!', err); // return?
+    console.log('jwtClient error', err); // return?
   } else {
-    console.log('Successfully connected to sheet!');
+    console.log('Successfully connected to sheet');
   }
 });
 
-//const spreadsheetId = '1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI';
-const sheetRange = 'Sprint1!A1:B10';
 const sheets = google.google.sheets('v4');
 
-const retrieveCache = () => {
+const cohortSheetIds = {
+  rpp35: "1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM",
+  rpp36: "1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI"
+}
 
-  let promises = [];
-  let cohorts = Object.keys(cohortSheetIds);
-  for (let cohort of cohorts) {
-    promises.push(new Promise((resolve, reject) => {
-      sheets.spreadsheets.values.get(
-        {
-          auth: jwtClient,
-          range: sheetRange,
-          spreadsheetId: cohortSheetIds[cohort]
-        },
-        (err, response) => {
-          if (err) {
-            console.log('The API returned an error when getting data for ${key}: ' + err);
-            reject(err);
-          } else {
-           resolve(response.data.values);
-          }
-        });
-    }))
-  }
-
-  return Promise.all(promises);
-  // return sheets.spreadsheets.values.get(
-  //   {
-  //     auth: jwtClient,
-  //     range: sheetRange,
-  //     spreadsheetId
-  //   },
-  //   (err, response) => {
-  //     if (err) {
-  //       console.log('The API returned an error: ' + err);
-  //     } else {
-  //       console.log('Data from Ghostbuster Google Sheet:', response.data.values);
-  //     }
-  //   });
+// these are the Sprint names + sheetranges for data retrieval
+const rangesBySprint = {
+  SprintOne: "A1:B10",
+  SprintTwo: "A1:B10"
 };
 
-const updateCache = () => {
+const retrieveCache = (cohort, sprintNames) => {
+
+  // remove after testing
+  cohort = 'rpp35';
+  sprintNames = ['SprintOne', 'SprintTwo'];
+
+  const formattedRanges = sprintNames.map(name => `${name}!${rangesBySprint[name]}`);
+
+  return new Promise((resolve, reject) => {
+    sheets.spreadsheets.values.batchGet(
+      {
+        auth: jwtClient,
+        spreadsheetId: cohortSheetIds[cohort],
+        ranges: formattedRanges
+      },
+      (err, response) => {
+        if (err) {
+          console.log(`The API returned an error when getting data for ${cohort}: ` + err);
+          reject(error);
+        } else {
+          results = response.data.valueRanges;
+          resolve(results);
+        }
+      }
+    );
+  });
+};
 
 
+const updateCache = (cohort, sprintNames) => {
 
 }
 
-
-const cohortSheetIds = {
-  rpp35: '1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM',
-  rpp36: '1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI'
-}
 
 module.exports.sheetsController = {
   retrieveCache,
