@@ -1,5 +1,6 @@
 const google = require('googleapis');
 const Promise = require('bluebird');
+const { formatSheetUpdate } = require('../../db/models/sheets-model');
 require('dotenv').config();
 
 const jwtClient = new google.google.auth.JWT(
@@ -59,12 +60,24 @@ const retrieveCache = (cohort, sprintNames) => {
 };
 
 
-const updateCache = (cohort, sprintNames) => {
+const updateCache = (githubData, cohort) => {
 
-}
+  const resource = formatSheetUpdate(githubData);
+  const spreadsheetId = cohortSheetIds[cohort];
 
+  return new Promise((resolve, reject) => {
+    sheets.Spreadsheets.Values.batchUpdate(resource, spreadsheetId, (err, response) => {
+      if (err) {
+        console.log(`The API returned an error when updating data for ${cohort}: ` + err);
+        reject(error);
+      } else {
+        resolve(`Cache successfully updated for ${cohort}`);
+      }
+    });
+  });
+};
 
 module.exports.sheetsController = {
   retrieveCache,
   updateCache
-}
+};
