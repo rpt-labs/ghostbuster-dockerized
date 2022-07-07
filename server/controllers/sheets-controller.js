@@ -21,8 +21,8 @@ jwtClient.authorize((err) => {
 const sheets = google.google.sheets('v4');
 
 const cohortSheetIds = {
-  rpp35: "1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM",
-  rpp36: "1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI"
+  "hr-rpp35": "1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM",
+  "hr-rpp36": "1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI"
 }
 
 // these are the Sprint names + sheetranges for data retrieval
@@ -60,21 +60,20 @@ const retrieveCache = (cohort, sprintNames) => {
 };
 
 
-const updateCache = (githubData, cohort) => {
+const updateCache = (cohort, githubData) => {
 
-  const resource = formatSheetUpdate(githubData);
+  const resource = formatSheetUpdate(cohort, githubData);
   const spreadsheetId = cohortSheetIds[cohort];
 
-  return new Promise((resolve, reject) => {
-    sheets.Spreadsheets.Values.batchUpdate(resource, spreadsheetId, (err, response) => {
-      if (err) {
-        console.log(`The API returned an error when updating data for ${cohort}: ` + err);
-        reject(error);
-      } else {
-        resolve(`Cache successfully updated for ${cohort}`);
-      }
-    });
+  console.log('RESOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ', resource)
+
+  return sheets.spreadsheets.values.batchUpdate({
+    auth: jwtClient,
+    valueInputOption: 'USER_ENTERED',
+    spreadsheetId,
+    resource
   });
+
 };
 
 module.exports.sheetsController = {
