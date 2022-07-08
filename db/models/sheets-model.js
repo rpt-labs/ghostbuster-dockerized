@@ -34,6 +34,7 @@ const formatSheetUpdate = (cohort, resource) => {
     let cohort = [];
 
     let values = [];
+    //values.push(names, BMR, AdvancedContent, percentComplete, commitMessages, github, cohort);
     values.push(names, BMR, AdvancedContent, percentComplete, commitMessages, github, cohort);
 
 
@@ -42,7 +43,7 @@ const formatSheetUpdate = (cohort, resource) => {
       names.push(resource[key][i].name);
       BMR.push(resource[key][i][BMR]);
       AdvancedContent.push(resource[key][i].AdvancedContent);
-      percentComplete.push(resource[key][i].percentComplete);
+      percentComplete.push(JSON.stringify(resource[key][i].percentComplete));
       commitMessages.push(JSON.stringify(resource[key][i].commitMessages));
       github.push(resource[key][i].github);
       cohort.push(resource[key][i].cohort);
@@ -51,10 +52,16 @@ const formatSheetUpdate = (cohort, resource) => {
     let data = [];
     let columnLetters = ["A", "B", "C", "D", "E", "F", "G"];
 
+
     for (let i = 0; i < values.length; i++) {
       let updatePacket = {
         range: `${sprintName}!${columnLetters[i]}2:${columnLetters[i]}40`,
-        values: values[i].map(value => [value])
+        values: values[i].map(value => {
+          if (value === null || value === undefined || value === " ") {
+            value = 'not listed';
+          }
+          return [value];
+        })
       }
       data.push(updatePacket);
     }
@@ -62,20 +69,9 @@ const formatSheetUpdate = (cohort, resource) => {
     const result = {
       data
     };
-
     results.push(result);
 
   }
-
-
- // take github data and add to data array in following format
-  // {
-  //   range: "Sheet1!A1",   // Update single cell
-  //   values: [
-  //     ["A1"]
-  //   ]
-  // },
-
 
   return results;
 

@@ -62,19 +62,20 @@ const retrieveCache = (cohort, sprintNames) => {
 
 const updateCache = (cohort, githubData) => {
 
-  const resource = formatSheetUpdate(cohort, githubData);
+  const data = formatSheetUpdate(cohort, githubData)[0].data;
   const spreadsheetId = cohortSheetIds[cohort];
-
-  console.log('RESOURCE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ', resource)
 
   return sheets.spreadsheets.values.batchUpdate({
     auth: jwtClient,
-    valueInputOption: 'USER_ENTERED',
     spreadsheetId,
-    resource
+    resource: {
+      valueInputOption: 'USER_ENTERED',
+      data: data
+    }
   });
 
 };
+
 
 module.exports.sheetsController = {
   retrieveCache,
