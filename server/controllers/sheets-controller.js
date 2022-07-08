@@ -1,6 +1,6 @@
 const google = require('googleapis');
 const Promise = require('bluebird');
-const { formatSheetUpdate } = require('../../db/models/sheets-model');
+const { formatSheetUpdate, formatSheetExtract } = require('../../db/models/sheets-model');
 require('dotenv').config();
 
 const jwtClient = new google.google.auth.JWT(
@@ -28,14 +28,15 @@ const cohortSheetIds = {
 // these are the Sprint names + sheetranges for data retrieval
 const rangesBySprint = {
   SprintOne: "A1:B10",
-  SprintTwo: "A1:B10"
+  SprintTwo: "A1:B10",
+  beesbeesbees: "A1:G40"
 };
 
 const retrieveCache = (cohort, sprintNames) => {
 
   // remove after testing
-  cohort = 'rpp35';
-  sprintNames = ['SprintOne', 'SprintTwo'];
+  cohort = 'hr-rpp36';
+  sprintNames = ['beesbeesbees'];
 
   const formattedRanges = sprintNames.map(name => `${name}!${rangesBySprint[name]}`);
 
@@ -52,6 +53,7 @@ const retrieveCache = (cohort, sprintNames) => {
           reject(error);
         } else {
           results = response.data.valueRanges;
+          results = formatSheetExtract(results);
           resolve(results);
         }
       }

@@ -55,23 +55,29 @@ exports.deleteMessage = async (req, res) => {
 // updateCache test URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/false
 exports.getSprintGithubData = async (req, res) => {
   let { sprintNames, cohort, cacheFlag } = req.params;
+  let result;
   sprintNames = sprintNames.split('+');
 
   if (JSON.parse(cacheFlag)) {
     sheetsController.retrieveCache(cohort, sprintNames)
-    .then(data => console.log(data))
+    .then(data => {
+        result = data;
+        res.status(200).json(result);
+    })
     .catch(err => {
       console.log(err);
     });
   } else {
-    const data = await getSprintDataByCohort(cohort, sprintNames);
-    sheetsController.updateCache(cohort, data)
-    .then(data => {
-      console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `, data);
+    const sprintData = await getSprintDataByCohort(cohort, sprintNames);
+    sheetsController.updateCache(cohort, sprintData)
+    .then(() => {
+      console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `);
+      result = sprintData;
+      res.status(200).json(result);
     })
     .catch(err => {
       console.log(`error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `, err);
     });
   }
-  res.status(200).json(result);
+
 };

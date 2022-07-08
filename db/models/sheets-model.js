@@ -5,22 +5,6 @@ const formatSheetUpdate = (cohort, resource) => {
   // this model will accept the github fetch data and
   // process it into the appropriate format for use in
   // Sheets.Spreadsheets.Values.batchUpdate(resource, spreadsheetId);
-  // in the sheets-controller cache update method
-
-  // incoming resource format:
-
-  // {
-  //   beesbeesbees: [
-  //     {
-  //       name: 'Carmen Montero',
-  //       BMR: false,
-  //       AdvancedContent: false,
-  //       percentComplete: 0,
-  //       commitMessages: [Array],
-  //       github: 'carmmmm',
-  //       cohort: 'hr-rpp36'
-  //     },
-  //     {
 
   for (key in resource) {
 
@@ -34,7 +18,6 @@ const formatSheetUpdate = (cohort, resource) => {
     let cohort = [];
 
     let values = [];
-    //values.push(names, BMR, AdvancedContent, percentComplete, commitMessages, github, cohort);
     values.push(names, BMR, AdvancedContent, percentComplete, commitMessages, github, cohort);
 
 
@@ -77,7 +60,60 @@ const formatSheetUpdate = (cohort, resource) => {
 
 };
 
+const formatSheetExtract = (data) => {
+
+  // incoming format:
+  // [
+  //   {
+
+  //     range: 'beesbeesbees:!A1:G40',
+  //     majorDimension: "ROWS",
+  //     values: [
+  //       ["name", "BMR"...], [ next row ],
+  //     ]
+
+  //   }
+  // ]
+
+    let total = {};
+
+    for (let i = 0; i < data.length; i++) {
+
+      let sprintName = data[i].range.split('!')[0];
+      total[sprintName] = [];
+      let studentObj = {}
+      for (let j = 1; j < data[i].values.length; j++) {
+        studentObj.name = data[i].values[j][0];
+        studentObj.BMR = data[i].values[j][1];
+        studentObj.AdvancedContent = data[i].values[j][2];
+        studentObj.percentComplete = Number(data[i].values[j][3]);
+        studentObj.commitMessages = JSON.parse(data[i].values[j][4]);
+        studentObj.github = data[i].values[j][5];
+        studentObj.cohort = data[i].values[j][6];
+        total[sprintName].push(studentObj);
+        studentObj = {};
+      }
+    }
+
+    return total;
+
+  // desired format:
+
+  // {
+  //   beesbeesbees: [
+  //     {
+  //       name: 'Carmen Montero',
+  //       BMR: false,
+  //       AdvancedContent: false,
+  //       percentComplete: 0,
+  //       commitMessages: [Array],
+  //       github: 'carmmmm',
+  //       cohort: 'hr-rpp36'
+  //     },
+}
+
 
 module.exports = {
-  formatSheetUpdate
+  formatSheetUpdate,
+  formatSheetExtract
 };
