@@ -51,33 +51,33 @@ exports.deleteMessage = async (req, res) => {
   res.json({ message: 'add functionality to delete new milestone message' });
 };
 
-// local endpoint URI http://localhost:1234/ghostbuster/sprints/somename/true
-// updateCache test URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/false
+// cache test URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/true
+// github API fetch + update cache URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/false
+
 exports.getSprintGithubData = async (req, res) => {
   let { sprintNames, cohort, cacheFlag } = req.params;
-  let result;
   sprintNames = sprintNames.split('+');
 
   if (JSON.parse(cacheFlag)) {
-    sheetsController.retrieveCache(cohort, sprintNames)
-    .then(data => {
-        result = data;
+    sheetsController
+      .retrieveCache(cohort, sprintNames)
+      .then(result => {
         res.status(200).json(result);
-    })
-    .catch(err => {
-      console.log(err);
-    });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   } else {
     const sprintData = await getSprintDataByCohort(cohort, sprintNames);
-    sheetsController.updateCache(cohort, sprintData)
-    .then(() => {
-      console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `);
-      result = sprintData;
-      res.status(200).json(result);
-    })
-    .catch(err => {
-      console.log(`error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `, err);
-    });
-  }
+    sheetsController
+      .updateCache(cohort, sprintData)
+      .then(() => {
+        console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `);
+        res.status(200).json(sprintData);
+      })
+      .catch(err => {
+        console.log(`error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `, err);
+      });
+  };
 
 };
