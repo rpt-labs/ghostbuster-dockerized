@@ -12,7 +12,7 @@ const jwtClient = new google.google.auth.JWT(
 
 jwtClient.authorize((err) => {
   if (err) {
-    console.log('jwtClient error', err); // return?
+    console.log('jwtClient error', err);
   } else {
     console.log('Successfully connected to sheet');
   }
@@ -21,16 +21,9 @@ jwtClient.authorize((err) => {
 const sheets = google.google.sheets('v4');
 
 const cohortSheetIds = {
-  "hr-rpp35": "1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM",
-  "hr-rpp36": "1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI"
+  'hr-rpp35': '1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM',
+  'hr-rpp36': '1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI'
 }
-
-// these are the Sprint names + sheetranges for data retrieval
-const rangesBySprint = {
-  SprintOne: "A1:B10",
-  SprintTwo: "A1:B10",
-  beesbeesbees: "A1:G40"
-};
 
 const retrieveCache = (cohort, sprintNames) => {
 
@@ -38,7 +31,7 @@ const retrieveCache = (cohort, sprintNames) => {
   cohort = 'hr-rpp36';
   sprintNames = ['beesbeesbees'];
 
-  const formattedRanges = sprintNames.map(name => `${name}!${rangesBySprint[name]}`);
+  const formattedRanges = sprintNames.map(name => `${name}!A1:G40`);
 
   return new Promise((resolve, reject) => {
     sheets.spreadsheets.values.batchGet(
@@ -64,7 +57,7 @@ const retrieveCache = (cohort, sprintNames) => {
 
 const updateCache = (cohort, githubData) => {
 
-  const data = formatSheetUpdate(cohort, githubData)[0].data;
+  const formattedData = formatSheetUpdate(cohort, githubData)[0].data;
   const spreadsheetId = cohortSheetIds[cohort];
 
   return sheets.spreadsheets.values.batchUpdate({
@@ -72,7 +65,7 @@ const updateCache = (cohort, githubData) => {
     spreadsheetId,
     resource: {
       valueInputOption: 'USER_ENTERED',
-      data: data
+      data: formattedData
     }
   });
 
