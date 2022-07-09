@@ -6,6 +6,8 @@ const formatSheetUpdate = (cohort, resource) => {
 
   const results = [];
 
+  console.log('this is the resource in the update sheet method ++++++++++++++++++++', resource)
+
   const keys = Object.keys(resource);
 
   for (let i = 0; i < keys.length; i += 1) {
@@ -61,9 +63,9 @@ const formatSheetExtract = data => {
 
     for (let j = 1; j < data[i].values.length; j += 1) {
       const current = data[i].values[j];
-      studentObj.name = current[0];
-      studentObj.BMR = current[1];
-      studentObj.AdvancedContent = current[2];
+      studentObj.name = current[0] === "not listed" ? " " : current[0];
+      studentObj.BMR = current[1] === "FALSE" ? false : true;
+      studentObj.AdvancedContent = current[2] === "FALSE" ? false : true;
       studentObj.percentComplete = Number(current[3]);
       studentObj.commitMessages = JSON.parse(current[4]);
       studentObj.github = current[5];

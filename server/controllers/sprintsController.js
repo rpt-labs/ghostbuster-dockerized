@@ -58,26 +58,40 @@ exports.getSprintGithubData = async (req, res) => {
   let { sprintNames, cohort, cacheFlag } = req.params;
   sprintNames = sprintNames.split('+');
 
-  if (JSON.parse(cacheFlag)) {
-    sheetsController
-      .retrieveCache(cohort, sprintNames)
-      .then(result => {
-        res.status(200).json(result);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  } else {
-    const sprintData = await getSprintDataByCohort(cohort, sprintNames);
-    sheetsController
-      .updateCache(cohort, sprintData)
-      .then(() => {
-        console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `);
-        res.status(200).json(sprintData);
-      })
-      .catch(err => {
-        console.log(`error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `, err);
-      });
-  };
+  const fromGithub = await getSprintDataByCohort(cohort, sprintNames);
+  // const updatedCaceh = await sheetsController.updateCache(cohort, fromGithub);
+  const fromCache = await sheetsController.retrieveCache(cohort, sprintNames);
+
+  console.log(JSON.stringify(fromGithub));
+  console.log('-------------------------------------------------------------------------------------------------');
+  console.log(JSON.stringify(fromCache));
+
+  const isEqual = JSON.stringify(fromGithub) === JSON.stringify(fromCache);
+  console.log('from Github === from Cache? ???????????????????????? ', isEqual);
+
+
+
+
+  // if (JSON.parse(cacheFlag)) {
+  //   sheetsController
+  //     .retrieveCache(cohort, sprintNames)
+  //     .then(result => {
+  //       res.status(200).json(result);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // } else {
+  //   const sprintData = await getSprintDataByCohort(cohort, sprintNames);
+  //   sheetsController
+  //     .updateCache(cohort, sprintData)
+  //     .then(() => {
+  //       console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `);
+  //       res.status(200).json(sprintData);
+  //     })
+  //     .catch(err => {
+  //       console.log(`error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `, err);
+  //     });
+  // };
 
 };
