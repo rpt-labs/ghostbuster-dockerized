@@ -26,11 +26,6 @@ const cohortSheetIds = {
 }
 
 const retrieveCache = (cohort, sprintNames) => {
-
-  // remove after testing
-  cohort = 'hr-rpp36';
-  sprintNames = ['beesbeesbees'];
-
   const formattedRanges = sprintNames.map(name => `${name}!A1:G40`);
 
   return new Promise((resolve, reject) => {
@@ -43,9 +38,9 @@ const retrieveCache = (cohort, sprintNames) => {
       (err, response) => {
         if (err) {
           console.log(`The API returned an error when getting data for ${cohort}: ` + err);
-          reject(error);
+          reject(err);
         } else {
-          results = response.data.valueRanges;
+          let results = response.data.valueRanges;
           results = formatSheetExtract(results);
           resolve(results);
         }
@@ -54,10 +49,8 @@ const retrieveCache = (cohort, sprintNames) => {
   });
 };
 
-
 const updateCache = (cohort, githubData) => {
-
-  const formattedData = formatSheetUpdate(cohort, githubData)[0].data;
+  const formattedData = formatSheetUpdate(cohort, githubData);
   const spreadsheetId = cohortSheetIds[cohort];
 
   return sheets.spreadsheets.values.batchUpdate({
@@ -68,9 +61,7 @@ const updateCache = (cohort, githubData) => {
       data: formattedData
     }
   });
-
 };
-
 
 module.exports.sheetsController = {
   retrieveCache,

@@ -1,12 +1,10 @@
+// this model will accept the github fetch data and
+// process it into the appropriate format for use in
+// the Google Sheet API batchUpdate(resource, spreadsheetId);
+
 const formatSheetUpdate = (cohort, resource) => {
 
-  // this model will accept the github fetch data and
-  // process it into the appropriate format for use in
-  // Sheets.Spreadsheets.Values.batchUpdate(resource, spreadsheetId);
-
   const results = [];
-
-  console.log('this is the resource in the update sheet method ++++++++++++++++++++', resource)
 
   const keys = Object.keys(resource);
 
@@ -24,7 +22,6 @@ const formatSheetUpdate = (cohort, resource) => {
       columns[6].push(resource[keys[i]][j].cohort);
     }
 
-    const data = [];
     const columnLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
     for (let k = 0; k < columns.length; k += 1) {
@@ -32,18 +29,13 @@ const formatSheetUpdate = (cohort, resource) => {
         range: `${sprintName}!${columnLetters[k]}2:${columnLetters[k]}40`,
         values: columns[k].map(value => {
           if (value === null || value === undefined || value === " ") {
-            value = 'not listed';
+            value = '* not listed *';
           }
           return [value];
         })
       };
-      data.push(updatePacket);
+      results.push(updatePacket);
     }
-
-    const result = {
-      data
-    };
-    results.push(result);
   }
   return results;
 };
@@ -63,9 +55,9 @@ const formatSheetExtract = data => {
 
     for (let j = 1; j < data[i].values.length; j += 1) {
       const current = data[i].values[j];
-      studentObj.name = current[0] === "not listed" ? " " : current[0];
-      studentObj.BMR = current[1] === "FALSE" ? false : true;
-      studentObj.AdvancedContent = current[2] === "FALSE" ? false : true;
+      studentObj.name = current[0] === '* not listed *' ? ' ' : current[0];
+      studentObj.BMR = current[1] === 'FALSE' ? false : true;
+      studentObj.AdvancedContent = current[2] === 'FALSE' ? false : true;
       studentObj.percentComplete = Number(current[3]);
       studentObj.commitMessages = JSON.parse(current[4]);
       studentObj.github = current[5];
