@@ -31,9 +31,9 @@ class Cohort extends Component {
     }
     const repositoryList = Object.keys(allSprints).length
       ? Object.keys(allSprints).map(sprint => ({
-          name: sprint,
-          selected: false
-        }))
+        name: sprint,
+        selected: false
+      }))
       : [];
     this.setState({ repos: repositoryList });
   };
@@ -99,15 +99,18 @@ class Cohort extends Component {
     );
 
     return (
-      <Fragment>
-        <TabNav selected={selected} cohorts={cohorts} selectCohort={selectCohort} />
-        <CheckboxList
-          repos={repos}
-          handleCheckboxChange={this.handleCheckboxChange}
-          storeCheckedRepos={this.storeCheckedRepos}
-        />
-        {viewDetails}
-      </Fragment>
+      <div>
+        <Fragment>
+          <div id="cache_toggle">cache enabled</div>
+          <TabNav selected={selected} cohorts={cohorts} selectCohort={selectCohort} />
+          <CheckboxList
+            repos={repos}
+            handleCheckboxChange={this.handleCheckboxChange}
+            storeCheckedRepos={this.storeCheckedRepos}
+          />
+          {viewDetails}
+        </Fragment>
+      </div>
     );
   }
 }
