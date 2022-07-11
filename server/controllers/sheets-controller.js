@@ -1,5 +1,6 @@
 const google = require('googleapis');
 const Promise = require('bluebird');
+const { formatSheetUpdate, formatSheetExtract } = require('../../db/models/sheets-model');
 require('dotenv').config();
 
 const jwtClient = new google.google.auth.JWT(
@@ -11,7 +12,7 @@ const jwtClient = new google.google.auth.JWT(
 
 jwtClient.authorize((err) => {
   if (err) {
-    console.log('jwtClient error', err); // return?
+    console.log('jwtClient error', err);
   } else {
     console.log('Successfully connected to sheet');
   }
@@ -20,23 +21,12 @@ jwtClient.authorize((err) => {
 const sheets = google.google.sheets('v4');
 
 const cohortSheetIds = {
-  rpp35: "1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM",
-  rpp36: "1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI"
+  'hr-rpp35': '1n61p0lHW6J-MxhtlkfC9JJ1SaqNMdwx5Mq0HSM4GVYM',
+  'hr-rpp36': '1gvEA5ki92eW2idOqmmILvc0URqzwM6V3tyaXePw9EQI'
 }
 
-// these are the Sprint names + sheetranges for data retrieval
-const rangesBySprint = {
-  SprintOne: "A1:B10",
-  SprintTwo: "A1:B10"
-};
-
 const retrieveCache = (cohort, sprintNames) => {
-
-  // remove after testing
-  cohort = 'rpp35';
-  sprintNames = ['SprintOne', 'SprintTwo'];
-
-  const formattedRanges = sprintNames.map(name => `${name}!${rangesBySprint[name]}`);
+  const formattedRanges = sprintNames.map(name => `${name}!A1:G40`);
 
   return new Promise((resolve, reject) => {
     sheets.spreadsheets.values.batchGet(
@@ -48,9 +38,10 @@ const retrieveCache = (cohort, sprintNames) => {
       (err, response) => {
         if (err) {
           console.log(`The API returned an error when getting data for ${cohort}: ` + err);
-          reject(error);
+          reject(err);
         } else {
-          results = response.data.valueRanges;
+          let results = response.data.valueRanges;
+          results = formatSheetExtract(results);
           resolve(results);
         }
       }
@@ -58,13 +49,21 @@ const retrieveCache = (cohort, sprintNames) => {
   });
 };
 
+const updateCache = (cohort, githubData) => {
+  const formattedData = formatSheetUpdate(cohort, githubData);
+  const spreadsheetId = cohortSheetIds[cohort];
 
-const updateCache = (cohort, sprintNames) => {
-
-}
-
+  return sheets.spreadsheets.values.batchUpdate({
+    auth: jwtClient,
+    spreadsheetId,
+    resource: {
+      valueInputOption: 'USER_ENTERED',
+      data: formattedData
+    }
+  });
+};
 
 module.exports.sheetsController = {
   retrieveCache,
   updateCache
-}
+};
