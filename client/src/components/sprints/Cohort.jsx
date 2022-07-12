@@ -7,6 +7,7 @@ import Repo from './Repo';
 import CheckboxList from './CheckboxList';
 import TabNav from '../TabNav';
 import sprints from '../../../../server/config/sprints';
+import Cache from './Cache';
 
 const { GHOSTBUSTER_BASE_URL } = process.env;
 const useApi = false;
@@ -79,7 +80,15 @@ class Cohort extends Component {
   };
 
   render() {
-    const { loading, commits, showSegment, selected, cohorts, selectCohort } = this.props;
+    const {
+      loading,
+      commits,
+      showSegment,
+      selected,
+      cohorts,
+      selectCohort,
+      toggleCache
+    } = this.props;
     const { repos } = this.state;
 
     const repoNames = Object.keys(commits);
@@ -101,7 +110,7 @@ class Cohort extends Component {
     return (
       <div>
         <Fragment>
-          <div id="cache_toggle">cache enabled</div>
+          <Cache toggleCache={toggleCache} />
           <TabNav selected={selected} cohorts={cohorts} selectCohort={selectCohort} />
           <CheckboxList
             repos={repos}
@@ -122,7 +131,8 @@ Cohort.propTypes = {
   repoSelect: PropTypes.func.isRequired,
   selected: PropTypes.string.isRequired,
   cohorts: PropTypes.instanceOf(Array).isRequired,
-  selectCohort: PropTypes.func.isRequired
+  selectCohort: PropTypes.func.isRequired,
+  toggleCache: PropTypes.func.isRequired
 };
 
 export default Cohort;
