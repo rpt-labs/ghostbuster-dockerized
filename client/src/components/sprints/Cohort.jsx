@@ -32,9 +32,9 @@ class Cohort extends Component {
     }
     const repositoryList = Object.keys(allSprints).length
       ? Object.keys(allSprints).map(sprint => ({
-        name: sprint,
-        selected: false
-      }))
+          name: sprint,
+          selected: false
+        }))
       : [];
     this.setState({ repos: repositoryList });
   };

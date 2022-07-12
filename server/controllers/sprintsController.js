@@ -55,10 +55,11 @@ exports.deleteMessage = async (req, res) => {
 // github API fetch + update cache URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/false
 
 exports.getSprintGithubData = async (req, res) => {
-  let { sprintNames, cohort, cacheFlag } = req.params;
+  let { sprintNames } = req.params;
+  const { cohort, cache } = req.query;
   sprintNames = sprintNames.split('+');
 
-  if (JSON.parse(cacheFlag)) {
+  if (JSON.parse(cache)) {
     sheetsController
       .retrieveCache(cohort, sprintNames)
       .then(result => {
@@ -80,4 +81,6 @@ exports.getSprintGithubData = async (req, res) => {
       });
   };
 
+  // let result = await getSprintDataByCohort(cohort, sprintNames);
+  // res.status(200).json(result);
 };

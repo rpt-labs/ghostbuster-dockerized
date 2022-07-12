@@ -95,13 +95,12 @@ export default class App extends Component {
   };
 
   checkSprints = () => {
-    const { repos, selectedCohort } = { ...this.state };
+    const { repos, selectedCohort, cacheEnabled } = { ...this.state };
     const repoString = repos.join('+');
     this.setState({ loading: true, showSegment: true }, () => {
       axios
         .get(
-          `${GHOSTBUSTER_BASE_URL}/ghostbuster/sprints/${repoString}?cohort=${selectedCohort}/
-          ${this.state.cacheEnabled}`
+          `${GHOSTBUSTER_BASE_URL}/ghostbuster/sprints/${repoString}?cohort=${selectedCohort}&cache=${cacheEnabled}`
         )
         .then(response =>
           this.setState({

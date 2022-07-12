@@ -7,15 +7,15 @@ class Cache extends Component {
     cache: false
   };
 
-  handleToggleCache(boolean) {
+  handleToggleCache() {
     const { cache } = this.state;
     const { toggleCache } = this.props;
     this.setState(
       {
-        cache: boolean
+        cache: !cache
       },
       () => {
-        toggleCache(cache);
+        toggleCache(!cache);
       }
     );
   }
@@ -27,7 +27,7 @@ class Cache extends Component {
         toggle
         label="enable cache"
         checked={cache}
-        onChange={() => this.handleToggleCache(!cache)}
+        onChange={() => this.handleToggleCache()}
       />
     );
   }
