@@ -23,12 +23,14 @@ class Cache extends Component {
   render() {
     const { cache } = this.state;
     return (
-      <Radio
-        toggle
-        label="enable cache"
-        checked={cache}
-        onChange={() => this.handleToggleCache()}
-      />
+      <div id="cache">
+        <Radio
+          toggle
+          label="enable cache"
+          checked={cache}
+          onChange={() => this.handleToggleCache()}
+        />
+      </div>
     );
   }
 }

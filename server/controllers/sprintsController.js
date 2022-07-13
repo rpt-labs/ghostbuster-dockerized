@@ -77,7 +77,10 @@ exports.getSprintGithubData = async (req, res) => {
         res.status(200).json(sprintData);
       })
       .catch(err => {
-        console.log(`error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `, err);
+        console.log(
+          `error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `,
+          err
+        );
       });
   };
 
