@@ -16,6 +16,6 @@ sprintsRouter.put('/messages', sprintsController.updateMessage);
 sprintsRouter.delete('/messages', sprintsController.deleteMessage);
 
 // get cohort progress with github checker
-sprintsRouter.get('/:sprintNames/:cohort/:cacheFlag', sprintsController.getSprintGithubData);
+sprintsRouter.get('/:sprintNames', sprintsController.getSprintGithubData);
 
 module.exports = sprintsRouter;
