@@ -33,7 +33,8 @@ export default class App extends Component {
     loading: false,
     showSegment: true,
     currentCommitData: {},
-    projectData: {}
+    projectData: {},
+    cacheEnabled: false
   };
 
   componentDidMount() {
@@ -94,11 +95,13 @@ export default class App extends Component {
   };
 
   checkSprints = () => {
-    const { repos, selectedCohort } = { ...this.state };
+    const { repos, selectedCohort, cacheEnabled } = { ...this.state };
     const repoString = repos.join('+');
     this.setState({ loading: true, showSegment: true }, () => {
       axios
-        .get(`${GHOSTBUSTER_BASE_URL}/ghostbuster/sprints/${repoString}?cohort=${selectedCohort}`)
+        .get(
+          `${GHOSTBUSTER_BASE_URL}/ghostbuster/sprints/${repoString}?cohort=${selectedCohort}&cache=${cacheEnabled}`
+        )
         .then(response =>
           this.setState({
             currentCommitData: response.data,
@@ -136,6 +139,12 @@ export default class App extends Component {
     });
   };
 
+  toggleCache = boolean => {
+    this.setState({
+      cacheEnabled: boolean
+    });
+  };
+
   render() {
     const {
       sprintCohorts,
@@ -168,6 +177,7 @@ export default class App extends Component {
                   loading={loading}
                   showSegment={showSegment}
                   commits={currentCommitData}
+                  toggleCache={this.toggleCache}
                 />
               )}
             />
