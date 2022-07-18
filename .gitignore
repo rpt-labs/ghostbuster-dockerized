@@ -14,6 +14,7 @@ server/config/students.js
 
 ##environment variables
 .env
+.vscode
 
 # Dependency directories
 node_modules/
@@ -26,5 +27,3 @@ node_modules/
 
 # Fake Data
 fakeData.js
-
-

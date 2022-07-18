@@ -1,2 +1,29 @@
-node_modules
+##file structure config
+server/config/cohorts.js
+server/config/config.js
+server/config/sprints.js
+server/config/teams.js
+server/config/students.js
+
+##environment variables
+.env
+.vscode
+.git
+
+# Dependency directories
+node_modules/
 npm-debug.log
+
+# Mac OS
+.DS_store
+
+# Webpack
+/public
+
+# Fake Data
+fakeData.js
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
