@@ -9,8 +9,8 @@ const apiHelper = require('./helpers/api');
 
 const port = process.env.PORT || 1234;
 
-// graphql
-const schema = require('./schema/schema');
+// // graphql - uncomment to enable database
+// const schema = require('./schema/schema');
 
 // controllers (other controllers are used in routes)
 const seedersController = require('./controllers/seedersController');
@@ -37,14 +37,14 @@ app.use(logger);
 // static files
 app.use('/', express.static(path.join(__dirname, '../public')));
 
-// graphql
-app.use(
-  '/graphql',
-  graphqlHTTP({
-    schema,
-    graphiql: true
-  })
-);
+// // graphql - uncomment to enable database
+// app.use(
+//   '/graphql',
+//   graphqlHTTP({
+//     schema,
+//     graphiql: true
+//   })
+// );
 
 // sprints
 app.use('/ghostbuster/sprints', sprints);
