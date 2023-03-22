@@ -1,5 +1,7 @@
 // github sprint checking util
 const getSprintDataByCohort = require('../helpers/sprintChecker');
+const { sheetsController } = require('./sheets-controller');
+
 
 // db
 const sprints = require('../../db/models/sprints');
@@ -49,11 +51,39 @@ exports.deleteMessage = async (req, res) => {
   res.json({ message: 'add functionality to delete new milestone message' });
 };
 
+// cache test URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/true
+// github API fetch + update cache URI http://localhost:1234/ghostbuster/sprints/beesbeesbees/hr-rpp36/false
+
 exports.getSprintGithubData = async (req, res) => {
   let { sprintNames } = req.params;
-  const { cohort } = req.query;
+  const { cohort, cache } = req.query;
   sprintNames = sprintNames.split('+');
 
-  const result = await getSprintDataByCohort(cohort, sprintNames);
-  res.status(200).json(result);
+  if (JSON.parse(cache)) {
+    sheetsController
+      .retrieveCache(cohort, sprintNames)
+      .then(result => {
+        res.status(200).json(result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  } else {
+    const sprintData = await getSprintDataByCohort(cohort, sprintNames);
+    sheetsController
+      .updateCache(cohort, sprintData)
+      .then(() => {
+        console.log(`cache updated for cohort ${cohort}, for sprint(s) ${sprintNames}: `);
+        res.status(200).json(sprintData);
+      })
+      .catch(err => {
+        console.log(
+          `error updating cache for cohort ${cohort}, for sprint(s) ${sprintNames}: `,
+          err
+        );
+      });
+  };
+
+  // let result = await getSprintDataByCohort(cohort, sprintNames);
+  // res.status(200).json(result);
 };

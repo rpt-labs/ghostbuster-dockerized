@@ -1,11 +1,4 @@
-## old file structure config
-config/cohorts.js
-config/config.js
-config/sprints.js
-config/teams.js
-config/students.js
-
-## new file structure config
+##file structure config
 server/config/cohorts.js
 server/config/config.js
 server/config/sprints.js
@@ -15,9 +8,11 @@ server/config/students.js
 ##environment variables
 .env
 .vscode
+.git
 
 # Dependency directories
 node_modules/
+npm-debug.log
 
 # Mac OS
 .DS_store
@@ -27,3 +22,8 @@ node_modules/
 
 # Fake Data
 fakeData.js
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
